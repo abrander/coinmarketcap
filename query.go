@@ -37,11 +37,12 @@ func Limit(limit int) func(*query) {
 	}
 }
 
-// Convert will make sure the result is also available in currency. An example
-// could be "DKK". Prices will always be returned in USD and BTC.
-func Convert(currency string) func(*query) {
+// Convert will make sure the result is also available in currency denoted by
+// symbol. An example could be "DKK". Prices will always be returned in USD
+// and BTC too.
+func Convert(symbol string) func(*query) {
 	return func(q *query) {
-		q.convert = currency
+		q.convert = symbol
 	}
 }
 
