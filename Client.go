@@ -32,6 +32,12 @@ func NewClient(options ...func(*Client)) (*Client, error) {
 	return client, nil
 }
 
+// Close will close the API client. For now this is a no-op. For future
+// compatibility you should always close the client.
+func (c *Client) Close() error {
+	return nil
+}
+
 // Ticker calls a ticker API endpoint and returns a TickerResult which you
 // can range through. Options are defined with the functions Start(), Limit(),
 // Convert() and Currency().
