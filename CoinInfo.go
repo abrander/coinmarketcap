@@ -2,14 +2,8 @@ package coinmarketcap
 
 import (
 	"encoding/json"
-	"errors"
 	"strings"
 	"time"
-)
-
-var (
-	// ErrCurrencyNotFound will be returned if the requested currency is not available.
-	ErrCurrencyNotFound = errors.New("currency not found")
 )
 
 // CoinInfo describes a coin.

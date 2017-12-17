@@ -1,8 +1,14 @@
 package coinmarketcap
 
 import (
+	"errors"
 	"strconv"
 	"strings"
+)
+
+var (
+	// ErrCurrencyNotFound will be returned if the requested currency is not available.
+	ErrCurrencyNotFound = errors.New("currency not found")
 )
 
 // priceTable can hold values in different currencies. It's useful when the
