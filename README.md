@@ -3,14 +3,18 @@
 This package provides access to the public [CoinMarketCap](https://coinmarketcap.com/) [API](https://coinmarketcap.com/api/).
 
 [![GoDoc][1]][2]
+[![Travis][3]][4]
 
 [1]: https://godoc.org/github.com/abrander/coinmarketcap?status.svg
 [2]: https://godoc.org/github.com/abrander/coinmarketcap
 
+[3]: https://travis-ci.org/abrander/coinmarketcap.svg?branch=master
+[4]: https://travis-ci.org/abrander/coinmarketcap
+
 ## Overview
 
 This package uses the [functional options pattern](https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis)
-to ensure that we can upgrade this package without breaking compatibility if the public API ever changes. 
+to ensure that we can upgrade this package without breaking compatibility if the public API ever changes.
 
 ## Examples
 
