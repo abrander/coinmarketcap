@@ -4,12 +4,17 @@ This package provides access to the public [CoinMarketCap](https://coinmarketcap
 
 [![GoDoc][1]][2]
 [![Travis][3]][4]
+[![Coverage][5]][6]
+
 
 [1]: https://godoc.org/github.com/abrander/coinmarketcap?status.svg
 [2]: https://godoc.org/github.com/abrander/coinmarketcap
 
 [3]: https://travis-ci.org/abrander/coinmarketcap.svg?branch=master
 [4]: https://travis-ci.org/abrander/coinmarketcap
+
+[5]: https://coveralls.io/repos/github/whyboris/karma-helpful-reporter/badge.svg?branch=master
+[6]: https://coveralls.io/github/whyboris/karma-helpful-reporter?branch=master
 
 ## Overview
 

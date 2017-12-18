@@ -1,6 +1,30 @@
 package coinmarketcap
 
-import "fmt"
+import (
+	"fmt"
+	"testing"
+)
+
+func TestQuery(t *testing.T) {
+	cases := []struct {
+		options  []func(*query)
+		expected string
+	}{
+		{[]func(*query){}, ""},
+		{[]func(*query){Start(50)}, "?start=50"},
+		{[]func(*query){Start(50), Limit(12)}, "?limit=12&start=50"},
+		{[]func(*query){Convert("USD")}, "?convert=USD"},
+		{[]func(*query){Currency("bitcoin")}, "bitcoin"},
+		{[]func(*query){Currency("bitcoin"), Start(50), Limit(12), Convert("DKK")}, "bitcoin?convert=DKK&limit=12&start=50"},
+	}
+
+	for i, c := range cases {
+		q := newQuery(c.options)
+		if q.tickerQuery() != c.expected {
+			t.Errorf("%d Got wrong query, got '%s', expected '%s'", i, q.tickerQuery(), c.expected)
+		}
+	}
+}
 
 func ExampleConvert() {
 	client, _ := NewClient()

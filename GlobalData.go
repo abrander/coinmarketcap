@@ -57,10 +57,8 @@ func (g *GlobalData) UnmarshalJSON(b []byte) error {
 
 	var kv map[string]json.RawMessage
 
-	err = json.Unmarshal(b, &kv)
-	if err != nil {
-		return err
-	}
+	// This should never fail.
+	json.Unmarshal(b, &kv)
 
 	for key, value := range kv {
 		switch {
