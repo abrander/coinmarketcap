@@ -12,7 +12,7 @@ func TestCoinInfoAccessors(t *testing.T) {
 		t.Fatalf("Could not read JSON from filesystem: %s", err.Error())
 	}
 
-	var result TickerResult
+	var result Ticker
 	err = json.Unmarshal(b, &result)
 	if err != nil {
 		t.Fatalf("Could not parse JSON: %s", err.Error())
@@ -68,7 +68,7 @@ func TestCoinInfoUnmarshalJSON(t *testing.T) {
 		t.Fatalf("Could not read JSON from filesystem: %s", err.Error())
 	}
 
-	var result TickerResult
+	var result Ticker
 	err = json.Unmarshal(b, &result)
 	if err != nil {
 		t.Fatalf("Could not parse JSON: %s", err.Error())

@@ -38,10 +38,10 @@ func (c *Client) Close() error {
 	return nil
 }
 
-// Ticker calls a ticker API endpoint and returns a TickerResult which you
-// can range through. Options are defined with the functions Start(), Limit(),
+// Ticker calls a ticker API endpoint and returns a Ticker which you can
+// range through. Options are defined with the functions Start(), Limit(),
 // Convert() and Currency().
-func (c *Client) Ticker(options ...func(*query)) (TickerResult, error) {
+func (c *Client) Ticker(options ...func(*query)) (Ticker, error) {
 	q := newQuery(options)
 
 	URL := c.baseURL + "/ticker/" + q.tickerQuery()
@@ -52,7 +52,7 @@ func (c *Client) Ticker(options ...func(*query)) (TickerResult, error) {
 	}
 	defer resp.Body.Close()
 
-	var result TickerResult
+	var result Ticker
 
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&result)
