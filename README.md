@@ -1,4 +1,4 @@
-# coinmarketcap
+# `import "github.com/abrander/coinmarketcap"`
 
 This package provides access to the public [CoinMarketCap](https://coinmarketcap.com/) [API](https://coinmarketcap.com/api/).
 
