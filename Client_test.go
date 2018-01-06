@@ -3,6 +3,7 @@ package coinmarketcap
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 func TestBaseURL(t *testing.T) {
@@ -15,6 +16,16 @@ func TestBaseURL(t *testing.T) {
 	if client.baseURL != "new-url" {
 		t.Errorf("Failed to set BaseURL, fgot %s, expected %s", client.baseURL, "new-url")
 	}
+}
+
+func TestRateLimit(t *testing.T) {
+	client, _ := NewClient(BaseURL(mockAddress), RateLimit(10000))
+	defer client.Close()
+
+	client.Ticker()
+
+	// Allow throttler to tick once
+	time.Sleep(time.Millisecond * 100)
 }
 
 func TestTicker(t *testing.T) {

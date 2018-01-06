@@ -3,11 +3,15 @@ package coinmarketcap
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 // Client is a client for talking to the coinmarketcap API.
 type Client struct {
-	baseURL string
+	baseURL          string
+	requestPerMinute int
+	ratelimit        chan bool
+	quit             chan bool
 }
 
 // BaseURL will define a new base URL. You would probably never use this.
@@ -17,24 +21,62 @@ func BaseURL(baseURL string) func(*Client) {
 	}
 }
 
+// RateLimit will set at which limit requests should be throttled. Default is
+// 10 per minute as kindly requested by CoinMarketCap.
+func RateLimit(requestPerMinute int) func(*Client) {
+	return func(c *Client) {
+		c.requestPerMinute = requestPerMinute
+	}
+}
+
 // NewClient will return a new client. For now this will never return an error,
 // but you should check it anyway. Maybe some time in the future we will
 // return an error.
 func NewClient(options ...func(*Client)) (*Client, error) {
 	client := &Client{
-		baseURL: "https://api.coinmarketcap.com/v1",
+		baseURL:          "https://api.coinmarketcap.com/v1",
+		quit:             make(chan bool),
+		requestPerMinute: 10,
 	}
 
 	for _, option := range options {
 		option(client)
 	}
 
+	client.ratelimit = make(chan bool, client.requestPerMinute)
+
+	go client.throttler()
+
 	return client, nil
+}
+
+func (c *Client) throttler() {
+	// Allow the client to use all requests at once.
+	for i := 0; i < c.requestPerMinute; i++ {
+		c.ratelimit <- true
+	}
+
+	ticker := time.NewTicker(time.Minute / time.Duration(c.requestPerMinute))
+
+	for {
+		select {
+		case <-ticker.C:
+			select {
+			case c.ratelimit <- true:
+			default:
+			}
+		case <-c.quit:
+			ticker.Stop()
+			return
+		}
+	}
 }
 
 // Close will close the API client. For now this is a no-op. For future
 // compatibility you should always close the client.
 func (c *Client) Close() error {
+	c.quit <- true
+
 	return nil
 }
 
@@ -46,7 +88,7 @@ func (c *Client) Ticker(options ...func(*query)) (Ticker, error) {
 
 	URL := c.baseURL + "/ticker/" + q.tickerQuery()
 
-	resp, err := http.Get(URL)
+	resp, err := c.get(URL)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +111,7 @@ func (c *Client) GlobalData(options ...func(*query)) (*GlobalData, error) {
 
 	URL := c.baseURL + "/global/" + q.tickerQuery()
 
-	resp, err := http.Get(URL)
+	resp, err := c.get(URL)
 	if err != nil {
 		return nil, err
 	}
@@ -84,4 +126,10 @@ func (c *Client) GlobalData(options ...func(*query)) (*GlobalData, error) {
 	}
 
 	return &result, nil
+}
+
+func (c *Client) get(URL string) (*http.Response, error) {
+	<-c.ratelimit
+
+	return http.Get(URL)
 }
