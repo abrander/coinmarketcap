@@ -2,6 +2,7 @@ package coinmarketcap
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -9,6 +10,7 @@ import (
 // Client is a client for talking to the coinmarketcap API.
 type Client struct {
 	baseURL          string
+	graphBaseURL     string
 	requestPerMinute int
 	ratelimit        chan bool
 	quit             chan bool
@@ -18,6 +20,14 @@ type Client struct {
 func BaseURL(baseURL string) func(*Client) {
 	return func(c *Client) {
 		c.baseURL = baseURL
+	}
+}
+
+// GraphBaseURL sets the base URL for graph data. You will probablye never
+// need this.
+func GraphBaseURL(graphBaseURL string) func(*Client) {
+	return func(c *Client) {
+		c.graphBaseURL = graphBaseURL
 	}
 }
 
@@ -35,6 +45,7 @@ func RateLimit(requestPerMinute int) func(*Client) {
 func NewClient(options ...func(*Client)) (*Client, error) {
 	client := &Client{
 		baseURL:          "https://api.coinmarketcap.com/v1",
+		graphBaseURL:     "https://graphs.coinmarketcap.com/",
 		quit:             make(chan bool),
 		requestPerMinute: 10,
 	}
@@ -118,6 +129,28 @@ func (c *Client) GlobalData(options ...func(*query)) (*GlobalData, error) {
 	defer resp.Body.Close()
 
 	var result GlobalData
+
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+// Graph will retrieve graph data. This is NOT part of the official
+// CoinMarketCap API. Currency could be "bitcoin".
+func (c *Client) Graph(currency string, from time.Time, to time.Time) (*GraphData, error) {
+	URL := fmt.Sprintf("%s/currencies/%s/%d/%d", c.graphBaseURL, currency, from.Unix()*1000, to.Unix()*1000)
+
+	resp, err := c.get(URL)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result GraphData
 
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&result)

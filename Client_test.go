@@ -92,6 +92,40 @@ func TestGlobalDataFail(t *testing.T) {
 	}
 }
 
+func TestGraph(t *testing.T) {
+	client, _ := NewClient(GraphBaseURL(mockAddress))
+	defer client.Close()
+
+	graph, err := client.Graph("bitcoin", time.Time{}, time.Time{})
+	if err != nil {
+		t.Fatalf("Graph() returned an unexpected error: %s", err.Error())
+	}
+
+	if len(graph.MarkepCap) != 9 {
+		t.Fatalf("Graph() did not return the expected amount of points, got %d, expected 9", len(graph.MarkepCap))
+	}
+}
+
+func TestGraphBrokenJSON(t *testing.T) {
+	client, _ := NewClient(GraphBaseURL(mockAddress + "/broken-json"))
+	defer client.Close()
+
+	_, err := client.Graph("bitcoin", time.Time{}, time.Time{})
+	if err == nil {
+		t.Errorf("Graph() did not fail as expected")
+	}
+}
+
+func TestGraphFail(t *testing.T) {
+	client, _ := NewClient(GraphBaseURL("http://127.0.0.1:0/"))
+	defer client.Close()
+
+	_, err := client.Graph("bitcoin", time.Time{}, time.Time{})
+	if err == nil {
+		t.Errorf("Graph() did not fail as expected")
+	}
+}
+
 func ExampleNewClient() {
 	client, _ := NewClient()
 	defer client.Close()
