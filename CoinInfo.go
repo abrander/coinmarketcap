@@ -8,17 +8,17 @@ import (
 
 // CoinInfo describes a coin.
 type CoinInfo struct {
-	ID               string
-	Name             string
-	Symbol           string
-	Rank             int
-	AvailableSupply  float64
-	TotalSupply      float64
-	MaxSupply        float64
-	PercentChange1H  float64
-	PercentChange24H float64
-	PercentChange7D  float64
-	LastUpdated      time.Time
+	ID               string    `json:"id"`
+	Name             string    `json:"name"`
+	Symbol           string    `json:"symbol"`
+	Rank             int       `json:"rank"`
+	AvailableSupply  float64   `json:"available_supply"`
+	TotalSupply      float64   `json:"total_supply"`
+	MaxSupply        float64   `json:"max_supply"`
+	PercentChange1H  float64   `json:"percent_change_1h"`
+	PercentChange24H float64   `json:"percent_change_24h"`
+	PercentChange7D  float64   `json:"percent_change_7d"`
+	LastUpdated      time.Time `json:"last_updated"`
 
 	price     priceTable
 	volume24h priceTable
