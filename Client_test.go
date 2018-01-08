@@ -1,9 +1,12 @@
 package coinmarketcap
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
+
+	"google.golang.org/appengine/urlfetch"
 )
 
 func TestBaseURL(t *testing.T) {
@@ -26,6 +29,11 @@ func TestRateLimit(t *testing.T) {
 
 	// Allow throttler to tick once
 	time.Sleep(time.Millisecond * 100)
+}
+
+func TestAppEngineCompatibility(t *testing.T) {
+	// If this compiles we should be good to go ;)
+	NewClient(HTTPClient(urlfetch.Client(context.TODO())))
 }
 
 func TestTicker(t *testing.T) {

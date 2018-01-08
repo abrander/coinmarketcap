@@ -14,6 +14,7 @@ type Client struct {
 	requestPerMinute int
 	ratelimit        chan bool
 	quit             chan bool
+	client           *http.Client
 }
 
 // BaseURL will define a new base URL. You would probably never use this.
@@ -39,6 +40,15 @@ func RateLimit(requestPerMinute int) func(*Client) {
 	}
 }
 
+// HTTPClient will change the HTTP client to use. Default is
+// http.DefaultClient. This can be used for example if you would like to use
+// the AppEngine http client.
+func HTTPClient(client *http.Client) func(*Client) {
+	return func(c *Client) {
+		c.client = client
+	}
+}
+
 // NewClient will return a new client. For now this will never return an error,
 // but you should check it anyway. Maybe some time in the future we will
 // return an error.
@@ -48,6 +58,7 @@ func NewClient(options ...func(*Client)) (*Client, error) {
 		graphBaseURL:     "https://graphs.coinmarketcap.com/",
 		quit:             make(chan bool),
 		requestPerMinute: 10,
+		client:           http.DefaultClient,
 	}
 
 	for _, option := range options {
@@ -164,5 +175,5 @@ func (c *Client) Graph(currency string, from time.Time, to time.Time) (*GraphDat
 func (c *Client) get(URL string) (*http.Response, error) {
 	<-c.ratelimit
 
-	return http.Get(URL)
+	return c.client.Get(URL)
 }
