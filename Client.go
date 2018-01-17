@@ -55,7 +55,7 @@ func HTTPClient(client *http.Client) func(*Client) {
 func NewClient(options ...func(*Client)) (*Client, error) {
 	client := &Client{
 		baseURL:          "https://api.coinmarketcap.com/v1",
-		graphBaseURL:     "https://graphs.coinmarketcap.com",
+		graphBaseURL:     "https://graphs2.coinmarketcap.com",
 		quit:             make(chan bool),
 		requestPerMinute: 10,
 		client:           http.DefaultClient,
